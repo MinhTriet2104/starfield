@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Starfield</title>
+    <style>
+        #background {
+            background: black;
+            position: absolute;
+            overflow: hidden;
+            width: 800px;
+            height: 600px;
+        }
+
+        #stars {
+            overflow: hidden;
+            width: 800px;
+            height: 600px;
+            position: absolute;
+        }
+
+        .star {
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="background">
+        <div id="stars"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.0.js"></script>
+    <script>
+        let n = 800;
+        const stars = [];
+        const listStar = [];
+        let distance = 100;
+
+        function randRange(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+
+        function star() {
+            this.top = randRange(0, 600);
+            this.left = randRange(0, 800);
+            this.height = randRange(2, 4);
+            this.width = this.height;
+            this.distance = 400;
+        }
+
+        function setup() {
+            for (let i = 0; i < n; i++) {
+                stars[i] = new star();
+            }
+        }
+
+        function show() {
+            for (let i = 0; i < n; i++) {
+                listStar[i] = (`<div class="star" style="top: ${stars[i].top}px; left: ${stars[i].left}px; height: ${stars[i].height}px; width: ${stars[i].width}px;"></div>`);
+            }
+            $('#stars').html(listStar.join(''));
+        }
+
+        function update() {
+            for (let i = 0; i < n; i++) {
+                let speed = stars[i].left * 0.05;
+                stars[i].top = stars[i].top + stars[i].top / (20 - speed);
+                stars[i].left = stars[i].left + stars[i].left / (20 - speed);
+                //stars[i].height +=  0.05;
+                stars[i].width = stars[i].height;
+                listStar[i] = (`<div class="star" style="top: ${stars[i].top}px; left: ${stars[i].left}px; height: ${stars[i].height}px; width: ${stars[i].width}px;"></div>`)
+            }
+            $('#stars').html(listStar.join(''));
+        }
+
+        function draw() {
+            show();
+            update();
+            setTimeout(draw, 20);
+        }
+
+        setup();
+        draw();
+    </script>
+</body>
+
+</html>
