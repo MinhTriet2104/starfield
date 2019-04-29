@@ -36,52 +36,75 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.4.0.js"></script>
     <script>
-        let n = 800;
-        const stars = [];
-        const listStar = [];
-        let distance = 100;
+        let n = 800; //This variable contain the number of star
+        const stars = []; //Array of star
+        const listStar = []; //Array of element star
+        const centerX = 400; //center of the X
+        const centerY = 300; //center of the Y
 
+        //Function return a random number from min to max
         function randRange(min, max) {
             return Math.floor(Math.random() * (max - min + 1) + min);
         }
 
         function star() {
-            this.top = randRange(0, 600);
-            this.left = randRange(0, 800);
-            this.height = randRange(2, 4);
-            this.width = this.height;
-            this.distance = 400;
+            this.x = randRange(0, 800); //random position x
+            this.y = randRange(0, 600); //random position y
+            this.z = randRange(0, 800); //random position z
+            this.height = 1; //init height is 2
+            this.width = this.height; //the star is a circle so the width must = the height
         }
 
+        //Create a n of star
         function setup() {
             for (let i = 0; i < n; i++) {
                 stars[i] = new star();
             }
         }
 
+        //Show stars to the screen
         function show() {
             for (let i = 0; i < n; i++) {
-                listStar[i] = (`<div class="star" style="top: ${stars[i].top}px; left: ${stars[i].left}px; height: ${stars[i].height}px; width: ${stars[i].width}px;"></div>`);
+                //update the x and y to make the star move faster when it near our face
+                let x = Math.floor((stars[i].x - centerX) * (800 / stars[i].z));
+                stars[i].x = x + centerX;
+
+                let y = Math.floor((stars[i].y - centerY) * (800 / stars[i].z));
+                stars[i].y = y + centerY;
+
+                //Also make the star bigger when it near
+                stars[i].height = stars[i].height * (800 / stars[i].z) + 0.2;
+                stars[i].width = stars[i].height;
+                
+                //input x, y, heigh, width to the list contain element star
+                listStar[i] = (`<div class="star" style="top: ${stars[i].y}px; left: ${stars[i].x}px; height: ${stars[i].height}px; width: ${stars[i].width}px;"></div>`);
             }
-            $('#stars').html(listStar.join(''));
+            $('#stars').html(listStar.join('')); //Now output it to the screen
         }
 
-        function update() {
+        function check() {
             for (let i = 0; i < n; i++) {
-                let speed = stars[i].left * 0.05;
-                stars[i].top = stars[i].top + stars[i].top / (20 - speed);
-                stars[i].left = stars[i].left + stars[i].left / (20 - speed);
-                //stars[i].height +=  0.05;
-                stars[i].width = stars[i].height;
-                listStar[i] = (`<div class="star" style="top: ${stars[i].top}px; left: ${stars[i].left}px; height: ${stars[i].height}px; width: ${stars[i].width}px;"></div>`)
+                stars[i].z -= 10;
+                //check if the z is less than 0 mean the star is out of screen
+                //then we random the star again to bring it back to the screen
+                if (stars[i].z <= 0) {
+                    stars[i].x = randRange(0, 800);
+                    stars[i].y = randRange(0, 600);
+                    stars[i].z = 800;
+                    stars[i].height = 1;
+                    stars[i].width = stars[i].height;
+                }
+
+                //After update our properties we need to update the listStar to print it to the screen
+                listStar[i] = (`<div class="star" style="top: ${stars[i].y}px; left: ${stars[i].x}px; height: ${stars[i].height}px; width: ${stars[i].width}px;"></div>`)
             }
-            $('#stars').html(listStar.join(''));
+            $('#stars').html(listStar.join('')); //Print it
         }
 
         function draw() {
             show();
-            update();
-            setTimeout(draw, 20);
+            check();
+            window.requestAnimationFrame(draw);
         }
 
         setup();
