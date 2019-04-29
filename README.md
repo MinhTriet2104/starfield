@@ -1,3 +1,2 @@
 # starfield
-## NOT COMPLETE
 Starfield
